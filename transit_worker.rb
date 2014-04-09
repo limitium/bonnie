@@ -4,8 +4,8 @@ class TransitWorker < ReplyWorker
     @backend_queue_name = queue_name
   end
 
-  def on_message(block, msg, delivery_info, properties)
-    result = block.call delivery_info, properties, msg
-    send_to result, :routing_key => @backend_queue_name, :reply_to => properties.reply_to, :correlation_id => properties.correlation_id, :persistent => true
+  def on_message(metadata, json, block)
+    result = block.call metadata, json
+    send_to result, :routing_key => @backend_queue_name, :reply_to => metadata.reply_to, :correlation_id => metadata.correlation_id, :persistent => true
   end
 end
